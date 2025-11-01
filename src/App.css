@@ -1,0 +1,143 @@
+/* 1. Use a more-intuitive box-sizing model */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* 2. Remove default margin */
+* {
+  margin: 0;
+}
+
+/* 3. Enable keyword animations */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    interpolate-size: allow-keywords;
+  }
+}
+
+body {
+  /* 4. Add accessible line-height */
+  line-height: 1.5;
+  /* 5. Improve text rendering */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 6. Improve media defaults */
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* 7. Inherit fonts for form controls */
+input, button, textarea, select {
+  font: inherit;
+}
+
+/* 8. Avoid text overflows */
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+/* 9. Improve line wrapping */
+p {
+  text-wrap: pretty;
+}
+h1, h2, h3, h4, h5, h6 {
+  text-wrap: balance;
+}
+
+/*
+  10. Create a root stacking context
+*/
+#root, #__next {
+  isolation: isolate;
+  width: 100%;
+}
+
+main {
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, #111827, #1f2937);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.calculator-body {
+  background-color: #000000;
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 24rem;
+}
+
+.display {
+  background-color: #111827;
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1rem;
+  text-align: right;
+  border: 0;
+  width: 100%;
+  font-size: 3rem;
+  font-weight: 300;
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+.button {
+  height: 4rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition: all 0.15s;
+  border: none;
+  cursor: pointer;
+}
+
+.button-row {
+  display: contents;
+}
+
+.button:active {
+  transform: scale(0.95);
+}
+
+.button.default {
+  background-color: #374151;
+  color: #ffffff;
+}
+
+.button.default:hover {
+  background-color: #4b5563;
+}
+
+.button.operator {
+  background-color: #f97316;
+  color: #ffffff;
+}
+
+.button.operator:hover {
+  background-color: #ea580c;
+}
+
+.button.top {
+  background-color: #6b7280;
+  color: #ffffff;
+}
+
+.button.top:hover {
+  background-color: #9ca3af;
+}
+
+.button.zero {
+  grid-column: span 2;
+}
