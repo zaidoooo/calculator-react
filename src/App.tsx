@@ -113,11 +113,19 @@ function App() {
   };
 
   const toggleNegate = () => {
-    setDisplayValue((prev) => +prev * -1 + "");
+    const { index } = isOperatorLastIndex();
+
+    setInputValue((prev) => ({
+      ...prev,
+      [index]: "*",
+      [index + 1]: "-1",
+    }));
+
+    setDisplayValue((prev) => String(+prev * -1));
   };
 
   const percentage = () => {
-    setDisplayValue((prev) => +prev / 100 + "");
+    setDisplayValue((prev) => String(+prev / 100));
   };
 
   return (
