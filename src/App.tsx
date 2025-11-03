@@ -78,6 +78,7 @@ function App() {
 
   const toggleNegate = () => {
     const { index } = isOperatorLastIndex();
+    if (index === 0) return; // prevent negate at the beginning
 
     // important to its evaluation to set it like this
     setInputValue((prev) => ({
@@ -91,6 +92,7 @@ function App() {
 
   const percentage = () => {
     const { index } = isOperatorLastIndex();
+    if (index === 0) return; // prevent negate at the beginning
 
     // important to its evaluation to set it like this
     setInputValue((prev) => ({
