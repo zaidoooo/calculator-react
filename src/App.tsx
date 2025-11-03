@@ -11,53 +11,17 @@ type ButtonProps = {
 
 const operators = ["+", "-", "*", "/"];
 
+// Documentation
+
+// The concept here is to store each input (digit or operator) as a value in an object with its index as the key.
+// This allows for easy manipulation of the input sequence, such as replacing the last operator if a new one is entered consecutively.
+// When calculating the result, we join the values of the object to form a valid mathematical expression.
+// Future enhancements could include handling parentheses and more complex expressions.
+
 function App() {
   const [inputValue, setInputValue] = useState<Record<string, string>>();
   const [displayValue, setDisplayValue] = useState("0");
   const inputRef = useRef<HTMLInputElement>(null);
-
-  // function isParenthesesBalanced(expr: string): boolean {
-  //   let count = 0;
-  //   for (const char of expr) {
-  //     if (char === "(") count++;
-  //     if (char === ")") count--;
-  //     if (count < 0) return false;
-  //   }
-  //   return count === 0;
-  // }
-
-  // handle input changes
-  // backspace
-  // clear
-  // only allow parentheses to be added/removed
-
-  // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const value = e.target.value;
-  //   // Only allow adding/removing parentheses
-  //   const charToInsert = value.replace(/[^()]/g, "");
-
-  //   if (inputRef.current) {
-  //     const inputElement = inputRef.current;
-  //     const cursorPosition = inputElement.selectionStart;
-  //     const currentValue = inputElement.value;
-  //     if (!cursorPosition) return;
-  //     const newValue =
-  //       currentValue.substring(0, cursorPosition) +
-  //       charToInsert +
-  //       currentValue.substring(cursorPosition);
-
-  //     setDisplayValue(newValue);
-
-  //     // Set a timeout to ensure the DOM updates before setting selection range
-  //     setTimeout(() => {
-  //       inputElement.focus();
-  //       inputElement.setSelectionRange(
-  //         cursorPosition + charToInsert.length,
-  //         cursorPosition + charToInsert.length
-  //       );
-  //     }, 0);
-  //   }
-  // };
 
   const calculate = () => {
     const expression = Object.values(inputValue || {}).join("");
@@ -113,12 +77,54 @@ function App() {
   };
 
   const toggleNegate = () => {
-    setDisplayValue((prev) => +prev * -1 + "");
+    const { index } = isOperatorLastIndex();
+
+    // important to its evaluation to set it like this
+    setInputValue((prev) => ({
+      ...prev,
+      [index]: "*",
+      [index + 1]: "-1",
+    }));
+
+    setDisplayValue((prev) => String(+prev * -1));
   };
 
   const percentage = () => {
-    setDisplayValue((prev) => +prev / 100 + "");
+    const { index } = isOperatorLastIndex();
+
+    // important to its evaluation to set it like this
+    setInputValue((prev) => ({
+      ...prev,
+      [index]: "/",
+      [index + 1]: "100",
+    }));
+
+    setDisplayValue((prev) => String(+prev / 100));
   };
+
+  const handlePeriod = (value: string) => {
+    const { index, isLastIndex } = isOperatorLastIndex();
+
+    if (isLastIndex) {
+      setDisplayValue("0.");
+      setInputValue((prev) => ({ ...prev, [index]: "0." }));
+      return;
+    }
+
+    // checks if display already has a period in the current number
+    const currentNumberMatch = displayValue.match(/(\d+\.?\d*)$/);
+    if (currentNumberMatch && currentNumberMatch[0].includes(".")) {
+      return;
+    }
+
+    setDisplayValue((prev) => prev + value);
+    setInputValue((prev) => ({
+      ...prev,
+      [index]: (prev?.[index] || "") + value,
+    }));
+  };
+
+  console.log({ inputValue });
 
   return (
     <main>
@@ -153,7 +159,7 @@ function App() {
           <Button type="operator" name="+" value="+" onClick={inputOperator} />
 
           <Button type="digits" name="0" value="0" onClick={inputDigits} />
-          <Button type="digits" name="." value="." onClick={inputDigits} />
+          <Button type="digits" name="." value="." onClick={handlePeriod} />
           <Button type="operator" name="=" value="=" onClick={calculate} />
         </section>
       </div>
