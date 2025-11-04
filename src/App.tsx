@@ -9,9 +9,9 @@ type ButtonProps = {
   onClick: (value: string) => void;
 };
 
-const operators = ["+", "-", "*", "/"];
+type Mode = "calculator" | "currency";
 
-// Documentation
+const operators = ["+", "-", "*", "/"];
 
 // The concept here is to store each input (digit or operator) as a value in an object with its index as the key.
 // This allows for easy manipulation of the input sequence, such as replacing the last operator if a new one is entered consecutively.
@@ -19,6 +19,7 @@ const operators = ["+", "-", "*", "/"];
 // Future enhancements could include handling parentheses and more complex expressions.
 
 function App() {
+  const [mode, setMode] = useState<Mode>("calculator");
   const [expression, setExpression] = useState("");
   const [displayValue, setDisplayValue] = useState("0");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -91,7 +92,6 @@ function App() {
 
   const handlePeriod = useCallback(
     (value: string) => {
-      // Check if current number already has a decimal
       const currentNumberMatch = displayValue.match(/(\d+\.?\d*)$/);
       if (currentNumberMatch?.[0].includes(".")) {
         return;
@@ -112,39 +112,86 @@ function App() {
   return (
     <main>
       <div className="calculator-body">
-        <input
-          className="display"
-          type="text"
-          value={displayValue}
-          readOnly
-          // onChange={handleInputChange}
-          ref={inputRef}
-        />
-        <section className="buttons">
-          <Button type="top" name="AC" value="all-clear" onClick={clear} />
-          <Button type="top" name="+/-" value="*-1" onClick={toggleNegate} />
-          <Button type="top" name="%" value="/100" onClick={percentage} />
-          <Button type="operator" name="÷" value="/" onClick={inputOperator} />
+        <div className="mode-selector">
+          <button
+            onClick={() => setMode("calculator")}
+            className={`mode-button ${mode === "calculator" ? "active" : ""}`}
+          >
+            Calculator
+          </button>
+          <button
+            onClick={() => setMode("currency")}
+            className={`mode-button ${mode === "currency" ? "active" : ""}`}
+          >
+            Currency
+          </button>
+        </div>
 
-          <Button type="digits" name="7" value="7" onClick={inputDigits} />
-          <Button type="digits" name="8" value="8" onClick={inputDigits} />
-          <Button type="digits" name="9" value="9" onClick={inputDigits} />
-          <Button type="operator" name="×" value="*" onClick={inputOperator} />
+        {mode === "calculator" ? (
+          <>
+            <input
+              className="display"
+              type="text"
+              value={displayValue}
+              readOnly
+              ref={inputRef}
+            />
+            <section className="buttons">
+              <Button type="top" name="AC" value="all-clear" onClick={clear} />
+              <Button
+                type="top"
+                name="+/-"
+                value="*-1"
+                onClick={toggleNegate}
+              />
+              <Button type="top" name="%" value="/100" onClick={percentage} />
+              <Button
+                type="operator"
+                name="÷"
+                value="/"
+                onClick={inputOperator}
+              />
 
-          <Button type="digits" name="4" value="4" onClick={inputDigits} />
-          <Button type="digits" name="5" value="5" onClick={inputDigits} />
-          <Button type="digits" name="6" value="6" onClick={inputDigits} />
-          <Button type="operator" name="-" value="-" onClick={inputOperator} />
+              <Button type="digits" name="7" value="7" onClick={inputDigits} />
+              <Button type="digits" name="8" value="8" onClick={inputDigits} />
+              <Button type="digits" name="9" value="9" onClick={inputDigits} />
+              <Button
+                type="operator"
+                name="×"
+                value="*"
+                onClick={inputOperator}
+              />
 
-          <Button type="digits" name="1" value="1" onClick={inputDigits} />
-          <Button type="digits" name="2" value="2" onClick={inputDigits} />
-          <Button type="digits" name="3" value="3" onClick={inputDigits} />
-          <Button type="operator" name="+" value="+" onClick={inputOperator} />
+              <Button type="digits" name="4" value="4" onClick={inputDigits} />
+              <Button type="digits" name="5" value="5" onClick={inputDigits} />
+              <Button type="digits" name="6" value="6" onClick={inputDigits} />
+              <Button
+                type="operator"
+                name="-"
+                value="-"
+                onClick={inputOperator}
+              />
 
-          <Button type="digits" name="0" value="0" onClick={inputDigits} />
-          <Button type="digits" name="." value="." onClick={handlePeriod} />
-          <Button type="operator" name="=" value="=" onClick={calculate} />
-        </section>
+              <Button type="digits" name="1" value="1" onClick={inputDigits} />
+              <Button type="digits" name="2" value="2" onClick={inputDigits} />
+              <Button type="digits" name="3" value="3" onClick={inputDigits} />
+              <Button
+                type="operator"
+                name="+"
+                value="+"
+                onClick={inputOperator}
+              />
+
+              <Button type="digits" name="0" value="0" onClick={inputDigits} />
+              <Button type="digits" name="." value="." onClick={handlePeriod} />
+              <Button type="operator" name="=" value="=" onClick={calculate} />
+            </section>
+          </>
+        ) : (
+          <div className="currency-converter">
+            <p>Currency converter coming soon...</p>
+          </div>
+        )}
       </div>
     </main>
   );
