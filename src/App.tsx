@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 import { chain, evaluate, filter } from "mathjs";
 
@@ -19,114 +19,95 @@ const operators = ["+", "-", "*", "/"];
 // Future enhancements could include handling parentheses and more complex expressions.
 
 function App() {
-  const [inputValue, setInputValue] = useState<Record<string, string>>();
+  const [expression, setExpression] = useState("");
   const [displayValue, setDisplayValue] = useState("0");
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const calculate = () => {
-    const expression = Object.values(inputValue || {}).join("");
+  const calculate = useCallback(() => {
+    if (!expression) return;
+
     try {
       const result = evaluate(expression);
-      setDisplayValue(result.toString());
-      setInputValue({ 0: result.toString() });
-    } catch (error) {
+      const resultStr = result.toString();
+      setDisplayValue(resultStr);
+      setExpression(resultStr);
+    } catch {
       setDisplayValue("Error");
-      setInputValue({});
+      setExpression("");
     }
-  };
+  }, [expression]);
 
-  const isOperatorLastIndex = useCallback(() => {
-    if (!inputValue) return { isLastIndex: false, index: 0 };
-    const index = Object.keys(inputValue || {}).length;
-    const lastIndex = index - 1;
-    const isOperator = operators.includes(inputValue[lastIndex]);
+  const lastChar = useMemo(() => expression.slice(-1), [expression]);
+  const isLastCharOperator = useMemo(
+    () => operators.includes(lastChar as (typeof operators)[number]),
+    [lastChar]
+  );
 
-    return {
-      isLastIndex: isOperator,
-      index,
-    };
-  }, [inputValue]);
-
-  const inputDigits = (value: string) => {
-    const { index, isLastIndex } = isOperatorLastIndex();
-
-    if (isLastIndex) {
-      setDisplayValue(value);
-      setInputValue((prev) => ({ ...prev, [index]: value }));
-      return;
-    }
-
-    setDisplayValue((prev) => (prev === "0" ? value : prev + value));
-    setInputValue((prev) => ({ ...prev, [index]: value }));
-  };
-
-  const inputOperator = (value: string) => {
-    const { index, isLastIndex } = isOperatorLastIndex();
-    if (index === 0) return; // prevent operator input at the beginning
-    setInputValue((prev) => {
-      if (isLastIndex) {
-        return { ...prev, [index - 1]: value };
+  const inputDigits = useCallback(
+    (value: string) => {
+      if (isLastCharOperator) {
+        setDisplayValue(value);
+        setExpression((prev) => prev + value);
+        return;
       }
-      return { ...prev, [index]: value };
-    });
-  };
 
-  const clear = () => {
-    setInputValue({});
+      setDisplayValue((prev) => (prev === "0" ? value : prev + value));
+      setExpression((prev) => prev + value);
+    },
+    [isLastCharOperator]
+  );
+
+  const inputOperator = useCallback(
+    (value: string) => {
+      if (!expression) return;
+
+      if (isLastCharOperator) {
+        setExpression((prev) => prev.slice(0, -1) + value);
+      } else {
+        setExpression((prev) => prev + value);
+      }
+    },
+    [expression, isLastCharOperator]
+  );
+
+  const clear = useCallback(() => {
+    setExpression("");
     setDisplayValue("0");
-  };
+  }, []);
 
-  const toggleNegate = () => {
-    const { index } = isOperatorLastIndex();
-    if (index === 0) return; // prevent negate at the beginning
+  const toggleNegate = useCallback(() => {
+    if (!expression) return;
 
-    // important to its evaluation to set it like this
-    setInputValue((prev) => ({
-      ...prev,
-      [index]: "*",
-      [index + 1]: "-1",
-    }));
+    setExpression((prev) => prev + "*-1");
+    setDisplayValue((prev) => String(Number(prev) * -1));
+  }, [expression]);
 
-    setDisplayValue((prev) => String(+prev * -1));
-  };
+  const percentage = useCallback(() => {
+    if (!expression) return;
 
-  const percentage = () => {
-    const { index } = isOperatorLastIndex();
-    if (index === 0) return; // prevent negate at the beginning
+    setExpression((prev) => prev + "/100");
+    setDisplayValue((prev) => String(Number(prev) / 100));
+  }, [expression]);
 
-    // important to its evaluation to set it like this
-    setInputValue((prev) => ({
-      ...prev,
-      [index]: "/",
-      [index + 1]: "100",
-    }));
+  const handlePeriod = useCallback(
+    (value: string) => {
+      // Check if current number already has a decimal
+      const currentNumberMatch = displayValue.match(/(\d+\.?\d*)$/);
+      if (currentNumberMatch?.[0].includes(".")) {
+        return;
+      }
 
-    setDisplayValue((prev) => String(+prev / 100));
-  };
+      if (isLastCharOperator || !expression) {
+        setDisplayValue("0.");
+        setExpression((prev) => prev + "0.");
+        return;
+      }
 
-  const handlePeriod = (value: string) => {
-    const { index, isLastIndex } = isOperatorLastIndex();
-
-    if (isLastIndex) {
-      setDisplayValue("0.");
-      setInputValue((prev) => ({ ...prev, [index]: "0." }));
-      return;
-    }
-
-    // checks if display already has a period in the current number
-    const currentNumberMatch = displayValue.match(/(\d+\.?\d*)$/);
-    if (currentNumberMatch && currentNumberMatch[0].includes(".")) {
-      return;
-    }
-
-    setDisplayValue((prev) => prev + value);
-    setInputValue((prev) => ({
-      ...prev,
-      [index]: (prev?.[index] || "") + value,
-    }));
-  };
-
-  console.log({ inputValue });
+      setDisplayValue((prev) => prev + value);
+      setExpression((prev) => prev + value);
+    },
+    [displayValue, expression, isLastCharOperator]
+  );
 
   return (
     <main>
