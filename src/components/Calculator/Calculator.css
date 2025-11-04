@@ -1,0 +1,20 @@
+.display {
+  background-color: #111827;
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1rem;
+  text-align: right;
+  border: 0;
+  width: 100%;
+  font-size: 3rem;
+  font-weight: 300;
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}

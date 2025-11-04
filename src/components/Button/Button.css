@@ -1,0 +1,49 @@
+.button {
+  height: 4rem;
+  font-size: 1.25rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition: all 0.15s;
+  border: none;
+  cursor: pointer;
+  background-color: #374151;
+}
+
+.button-row {
+  display: contents;
+}
+
+.button:active {
+  transform: scale(0.95);
+}
+
+.button.default {
+  background-color: #374151;
+  color: #ffffff;
+}
+
+.button.default:hover {
+  background-color: #4b5563;
+}
+
+.button.operator {
+  background-color: #f97316;
+  color: #ffffff;
+}
+
+.button.operator:hover {
+  background-color: #ea580c;
+}
+
+.button.top {
+  background-color: #6b7280;
+  color: #ffffff;
+}
+
+.button.top:hover {
+  background-color: #9ca3af;
+}
+
+.button.zero {
+  grid-column: span 2;
+}
