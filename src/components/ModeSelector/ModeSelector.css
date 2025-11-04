@@ -1,0 +1,30 @@
+.mode-selector {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  background: #1a1a1a;
+  border-radius: 1rem;
+  padding: 0.5rem;
+}
+
+.mode-button {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #9ca3af;
+  background: transparent;
+}
+
+.mode-button:hover {
+  color: #ffffff;
+}
+
+.mode-button.active {
+  background: #ff9500;
+  color: #ffffff;
+}
