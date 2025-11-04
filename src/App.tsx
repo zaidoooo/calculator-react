@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import "./App.css";
-import { chain, evaluate, filter } from "mathjs";
+import { evaluate } from "mathjs";
 
 type ButtonProps = {
   type: "top" | "operator" | "digits";
