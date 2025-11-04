@@ -13,5 +13,5 @@ export default defineConfig({
       },
     }),
   ],
-  base: './calculator-react/',
+  base: '/calculator-react/',
 })
